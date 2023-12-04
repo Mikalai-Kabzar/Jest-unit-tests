@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MyClassGetMockName should match snapshot for getValue method 1`] = `42`;
+
+exports[`MyClassGetMockName should match snapshot for multiplyBy method with different argument 1`] = `
+[MockFunction] {
+  "calls": [
+    [
+      4,
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`MyClassGetMockName should match snapshot for multiplyBy method with mockImplementation 1`] = `6`;
+
+exports[`MyClassGetMockName should match snapshot for multiplyBy method with mockReturnValue 1`] = `42`;
+
+exports[`MyClassGetMockName should match snapshot for multiplyBy method with specific argument 1`] = `
+[MockFunction] {
+  "calls": [
+    [
+      3,
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;

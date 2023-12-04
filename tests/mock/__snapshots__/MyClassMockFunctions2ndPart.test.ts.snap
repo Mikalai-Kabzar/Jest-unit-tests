@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MyClassGetMockName should match snapshot for getValue method 1`] = `42`;
