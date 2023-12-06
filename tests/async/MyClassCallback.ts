@@ -1,6 +1,7 @@
 class MyClassCallback {
     private value: number;
-  
+    private timeout = 2;
+
     constructor(value: number) {
       this.value = value;
     }
@@ -17,7 +18,7 @@ class MyClassCallback {
         } else {
           callback(this.value * factor);
         }
-      }, 1000);
+      }, this.timeout);
     }
   
     // Helper method to demonstrate chaining callbacks
@@ -25,7 +26,7 @@ class MyClassCallback {
       // Simulate an asynchronous operation
       setTimeout(() => {
         callback(this.value + value);
-      }, 500);
+      }, this.timeout);
     }
   }
   

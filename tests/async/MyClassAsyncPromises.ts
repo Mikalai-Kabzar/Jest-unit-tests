@@ -1,6 +1,7 @@
 class MyClassAsyncPromises {
     private value: number;
-  
+    private timeout = 2;
+
     constructor(value: number) {
       this.value = value;
     }
@@ -18,7 +19,7 @@ class MyClassAsyncPromises {
           } else {
             resolve(this.value * factor);
           }
-        }, 100);
+        }, this.timeout);
       });
     }
   
@@ -28,7 +29,7 @@ class MyClassAsyncPromises {
         // Simulate an asynchronous operation
         setTimeout(() => {
           resolve(this.value + value);
-        }, 50);
+        }, this.timeout);
       });
     }
   }
