@@ -4,6 +4,7 @@ import { User, Status } from './User';
 describe('User class', () => {
   it('should create a new user with the provided values', () => {
     const user = new User(
+      '1', // Mocked ID for testing
       'John',
       'Doe',
       25,
@@ -28,6 +29,7 @@ describe('User class', () => {
 
   it('should default children to an empty array if not provided', () => {
     const user = new User(
+      '1', 
       'Jane',
       'Doe',
       30,
@@ -43,8 +45,8 @@ describe('User class', () => {
   });
   
   it('should add a child to the user', () => {
-    const parent = new User('Parent', 'User', 35, 2000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
-    const child = new User('Child', 'User', 10, 0, [], 'Sparky', '987 Birch St', 'GHI789', Status.Outdated);
+    const parent = new User('1', 'Parent', 'User', 35, 2000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
+    const child = new User('2', 'Child', 'User', 10, 0, [], 'Sparky', '987 Birch St', 'GHI789', Status.Outdated);
 
     parent.children.push(child);
 
@@ -52,8 +54,8 @@ describe('User class', () => {
   });
 
   it('should edit a child\'s information', () => {
-    const parent = new User('Parent', 'User', 35, 2000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
-    const child = new User('Child', 'User', 10, 0, [], 'Sparky', '987 Birch St', 'GHI789', Status.Outdated);
+    const parent = new User('1', 'Parent', 'User', 35, 2000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
+    const child = new User('2', 'Child', 'User', 10, 0, [], 'Sparky', '987 Birch St', 'GHI789', Status.Outdated);
 
     parent.children.push(child);
 
@@ -66,8 +68,8 @@ describe('User class', () => {
   });
 
   it('should remove a child from the user', () => {
-    const parent = new User('Parent', 'User', 35, 2000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
-    const child = new User('Child', 'User', 10, 0, [], 'Sparky', '987 Birch St', 'GHI789', Status.Outdated);
+    const parent = new User('1', 'Parent', 'User', 35, 2000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
+    const child = new User('2', 'Child', 'User', 10, 0, [], 'Sparky', '987 Birch St', 'GHI789', Status.Outdated);
 
     parent.children.push(child);
 
@@ -79,9 +81,9 @@ describe('User class', () => {
   });
 
   it('should handle a user in "children" role with children of their own', () => {
-    const grandparent = new User('Grandparent', 'User', 60, 5000, [], 'Max', '567 Maple St', 'JKL012', Status.VIP);
-    const parent = new User('Parent', 'User', 35, 2000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
-    const child = new User('Child', 'User', 10, 0, [], 'Sparky', '987 Birch St', 'GHI789', Status.Outdated);
+    const grandparent = new User('1', 'Grandparent', 'User', 60, 5000, [], 'Max', '567 Maple St', 'JKL012', Status.VIP);
+    const parent = new User('2', 'Parent', 'User', 35, 2000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
+    const child = new User('3', 'Child', 'User', 10, 0, [], 'Sparky', '987 Birch St', 'GHI789', Status.Outdated);
 
     grandparent.children.push(parent);
     parent.children.push(child);
@@ -91,9 +93,9 @@ describe('User class', () => {
   });
 
   it('should calculate the total money of the user and their children', () => {
-    const parent = new User('Parent', 'User', 35, 2000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
-    const child1 = new User('Child1', 'User', 10, 500, [], 'Sparky', '987 Birch St', 'GHI789', Status.Outdated);
-    const child2 = new User('Child2', 'User', 8, 300, [], 'Fluffy', '654 Pine St', 'JKL321', Status.Regular);
+    const parent = new User('1', 'Parent', 'User', 35, 2000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
+    const child1 = new User('2', 'Child1', 'User', 10, 500, [], 'Sparky', '987 Birch St', 'GHI789', Status.Outdated);
+    const child2 = new User('3', 'Child2', 'User', 8, 300, [], 'Fluffy', '654 Pine St', 'JKL321', Status.Regular);
 
     parent.children.push(child1, child2);
 
@@ -103,9 +105,9 @@ describe('User class', () => {
   });
 
   it('should check if the user is eligible for a discount', () => {
-    const regularUser = new User('Regular', 'User', 25, 1000, [], 'Fido', '123 Oak St', 'MNO456', Status.Regular);
-    const vipUser = new User('VIP', 'User', 40, 5000, [], 'Rex', '987 Maple St', 'PQR789', Status.VIP);
-    const adminUser = new User('Admin', 'User', 30, 2000, [], 'Whiskers', '456 Cedar St', 'STU012', Status.Admin);
+    const regularUser = new User('1', 'Regular', 'User', 25, 1000, [], 'Fido', '123 Oak St', 'MNO456', Status.Regular);
+    const vipUser = new User('2', 'VIP', 'User', 40, 5000, [], 'Rex', '987 Maple St', 'PQR789', Status.VIP);
+    const adminUser = new User('3', 'Admin', 'User', 30, 2000, [], 'Whiskers', '456 Cedar St', 'STU012', Status.Admin);
 
     expect(regularUser.isEligibleForDiscount()).toBe(false);
     expect(vipUser.isEligibleForDiscount()).toBe(true);
@@ -114,18 +116,20 @@ describe('User class', () => {
 
   it('should initiate a user with a child who has a child', () => {
     const grandparent = new User(
+      '1', 
       'Grandparent',
       'User',
       60,
       5000,
       [
         new User(
+          '2', 
           'Parent',
           'User',
           35,
           2000,
           [
-            new User('Child', 'User', 10, 0, [], 'Sparky', '987 Birch St', 'GHI789', Status.Outdated),
+            new User('3', 'Child', 'User', 10, 0, [], 'Sparky', '987 Birch St', 'GHI789', Status.Outdated),
           ],
           'Buddy',
           '789 Elm St',
@@ -154,8 +158,8 @@ describe('User class', () => {
   });
 
   it('should increment the age of the user and their children until a certain age', () => {
-    const parent = new User('Parent', 'User', 35, 2000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
-    const child = new User('Child', 'User', 10, 0, [], 'Sparky', '987 Birch St', 'GHI789', Status.Outdated);
+    const parent = new User('1', 'Parent', 'User', 35, 2000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
+    const child = new User('2', 'Child', 'User', 10, 0, [], 'Sparky', '987 Birch St', 'GHI789', Status.Outdated);
 
     parent.children.push(child);
 
@@ -165,9 +169,9 @@ describe('User class', () => {
   });
 
   it('should categorize users based on their age', () => {
-    const childUser = new User('Child', 'User', 10, 0, [], 'Fido', '123 Oak St', 'MNO456', Status.Regular);
-    const adultUser = new User('Adult', 'User', 25, 1000, [], 'Rex', '987 Maple St', 'PQR789', Status.VIP);
-    const seniorUser = new User('Senior', 'User', 65, 3000, [], 'Whiskers', '456 Cedar St', 'STU012', Status.Admin);
+    const childUser = new User('1', 'Child', 'User', 10, 0, [], 'Fido', '123 Oak St', 'MNO456', Status.Regular);
+    const adultUser = new User('2', 'Adult', 'User', 25, 1000, [], 'Rex', '987 Maple St', 'PQR789', Status.VIP);
+    const seniorUser = new User('3', 'Senior', 'User', 65, 3000, [], 'Whiskers', '456 Cedar St', 'STU012', Status.Admin);
 
     expect(childUser.categorizeUserByAge()).toBe('Child');
     expect(adultUser.categorizeUserByAge()).toBe('Adult');
@@ -175,71 +179,71 @@ describe('User class', () => {
   });
 
   it('should check if the user is a teenager', () => {
-    const teenagerUser = new User('Teen', 'User', 16, 0, [], 'Fido', '123 Oak St', 'MNO456', Status.Regular);
-    const adultUser = new User('Adult', 'User', 25, 1000, [], 'Rex', '987 Maple St', 'PQR789', Status.VIP);
+    const teenagerUser = new User('1', 'Teen', 'User', 16, 0, [], 'Fido', '123 Oak St', 'MNO456', Status.Regular);
+    const adultUser = new User('2', 'Adult', 'User', 25, 1000, [], 'Rex', '987 Maple St', 'PQR789', Status.VIP);
 
     expect(teenagerUser.isTeenager()).toBe(true);
     expect(adultUser.isTeenager()).toBe(false);
   });
 
   it('should check if the user is a senior citizen', () => {
-    const seniorUser = new User('Senior', 'User', 70, 3000, [], 'Whiskers', '456 Cedar St', 'STU012', Status.Admin);
-    const adultUser = new User('Adult', 'User', 45, 2000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
+    const seniorUser = new User('1', 'Senior', 'User', 70, 3000, [], 'Whiskers', '456 Cedar St', 'STU012', Status.Admin);
+    const adultUser = new User('2', 'Adult', 'User', 45, 2000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
 
     expect(seniorUser.isSeniorCitizen()).toBe(true);
     expect(adultUser.isSeniorCitizen()).toBe(false);
   });
 
   it('should calculate the retirement age', () => {
-    const user = new User('User', 'Test', 35, 2000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
+    const user = new User('1', 'User', 'Test', 35, 2000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
 
     expect(user.calculateRetirementAge()).toBe(65);
   });
 
   it('should calculate years until retirement for an adult user', () => {
-    const adultUser = new User('Adult', 'User', 40, 2000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
+    const adultUser = new User('1', 'Adult', 'User', 40, 2000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
     const yearsToRetired = adultUser.calculateYearsToRetired();
 
     expect(yearsToRetired).toBe(25); // Retirement age is assumed to be 65
   });
 
   it('should calculate years until retirement for a user already at retirement age', () => {
-    const seniorUser = new User('Senior', 'User', 65, 3000, [], 'Whiskers', '456 Cedar St', 'STU012', Status.Admin);
+    const seniorUser = new User('1', 'Senior', 'User', 65, 3000, [], 'Whiskers', '456 Cedar St', 'STU012', Status.Admin);
     const yearsToRetired = seniorUser.calculateYearsToRetired();
 
     expect(yearsToRetired).toBe(0); // Already at retirement age
   });
 
   it('should calculate years until retirement for a teenager', () => {
-    const teenagerUser = new User('Teen', 'User', 16, 0, [], 'Fido', '123 Oak St', 'MNO456', Status.Regular);
+    const teenagerUser = new User('1', 'Teen', 'User', 16, 0, [], 'Fido', '123 Oak St', 'MNO456', Status.Regular);
     const yearsToRetired = teenagerUser.calculateYearsToRetired();
 
     expect(yearsToRetired).toBe(49); // Retirement age is assumed to be 65
   });
 
   it('should propose a new status for a user with low money', () => {
-    const user = new User('User', 'Test', 35, 500, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
+    const user = new User('1', 'User', 'Test', 35, 500, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
     const newStatus = user.proposeNewStatus();
 
     expect(newStatus).toBe(Status.Outdated);
   });
 
   it('should propose a new status for a user with moderate money', () => {
-    const user = new User('User', 'Test', 35, 3000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
+    const user = new User('1', 'User', 'Test', 35, 3000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
     const newStatus = user.proposeNewStatus();
 
     expect(newStatus).toBe(Status.Regular);
   });
 
   it('should propose a new status for a user with high money', () => {
-    const user = new User('User', 'Test', 35, 8000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
+    const user = new User('1', 'User', 'Test', 35, 8000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
     const newStatus = user.proposeNewStatus();
 
     expect(newStatus).toBe(Status.VIP);
   });
 
   it('should propose a new status for a user with very high money', () => {
-    const user = new User('User', 'Test', 35, 12000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
+    const user = new User('1', 'User', 'Test', 35, 12000, [], 'Buddy', '789 Elm St', 'DEF456', Status.Regular);
     const newStatus = user.proposeNewStatus();
 
     expect(newStatus).toBe(Status.Admin);

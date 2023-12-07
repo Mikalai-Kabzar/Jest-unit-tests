@@ -7,6 +7,7 @@ export enum Status {
   }
   
   export class User {
+    id: string; // Added id attribute
     firstName: string;
     lastName: string;
     age: number;
@@ -18,6 +19,7 @@ export enum Status {
     status: Status;
   
     constructor(
+      id: string, // Added id attribute
       firstName: string,
       lastName: string,
       age: number,
@@ -28,6 +30,7 @@ export enum Status {
       postCode: string,
       status: Status
     ) {
+      this.id = id;
       this.firstName = firstName;
       this.lastName = lastName;
       this.age = age;
