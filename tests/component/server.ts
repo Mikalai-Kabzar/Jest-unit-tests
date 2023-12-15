@@ -138,50 +138,6 @@ server.patch('/users/:id', (req: Request, res: Response) => {
   }
 });
 
-server.post('/users/:userId/children', (req: Request, res: Response) => {
-
-
-
-
-  const userId = req.params.userId;
-  const user = users.find((u) => u.id === userId);
-
-  if (user) {
-    const {
-      firstName,
-      lastName,
-      age,
-      money,
-      children,
-      petName,
-      address,
-      postCode,
-      status,
-    } = req.body;
-
-    const newChild = new User(
-      nextUserId.toString(),
-      firstName,
-      lastName,
-      age,
-      money,
-      children,
-      petName,
-      address,
-      postCode,
-      status
-    );
-
-    nextUserId++;
-
-    user.children.push(newChild);
-    users.push(newChild); // Add the child to the users array
-    res.status(201).json(newChild);
-  } else {
-    res.status(404).json({ error: 'User not found' });
-  }
-});
-
 // Get all children of a specific user by id
 server.get('/users/:userId/children', (req: Request, res: Response) => {
   const userId = req.params.userId;
