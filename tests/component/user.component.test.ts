@@ -1,7 +1,7 @@
 // user.component.test.ts
 import request from 'supertest';
 import { server, startServer, closeServer } from './server'; // Adjust the import path based on your project structure
-import { Status} from './User';
+import { Status, User} from './User';
 
 beforeAll(async () => {
   await startServer();
@@ -745,9 +745,210 @@ describe('User CRUD Operations', () => {
     expect(response.body.error).toBe('User not found');
   });
 
+  it('should return 404 status and error when adding a child to a non-existing user', async () => {
+    const nonExistingUserId = 'non-existing-user-id';
 
+    const response = await request(server)
+      .post(`/users/${nonExistingUserId}/children`)
+      .send({
+        firstName: 'Child',
+        lastName: 'User',
+        age: 5,
+        money: 100,
+        children: [],
+        petName: 'Puppy',
+        address: '123 Oak St',
+        postCode: 'ABC123',
+        status: 'Child',
+      });
 
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe('User not found');
+  });
 
+  it('should create a user and add a child to the user', async () => {
+    // Create a user first
+    const createUserResponse = await request(server)
+      .post('/users')
+      .send({
+        firstName: 'Test',
+        lastName: 'User',
+        age: 30,
+        money: 1500,
+        children: [],
+        petName: 'Buddy',
+        address: '789 Elm St',
+        postCode: 'DEF456',
+        status: 'Regular',
+      });
 
-  
+    expect(createUserResponse.status).toBe(201);
+    expect(createUserResponse.body.id).toBeDefined();
+
+    const userId = createUserResponse.body.id;
+
+    // Add a child to the user
+    const addChildResponse = await request(server)
+      .post(`/users/${userId}/children`)
+      .send({
+        firstName: 'Child',
+        lastName: 'User',
+        age: 5,
+        money: 100,
+        children: [],
+        petName: 'Puppy',
+        address: '123 Oak St',
+        postCode: 'ABC123',
+        status: 'Child',
+      });
+
+    expect(addChildResponse.status).toBe(201);
+    expect(addChildResponse.body.id).toBeDefined();
+    expect(addChildResponse.body.firstName).toBe('Child');
+
+    // Verify that the user now has the child
+    const getUserResponse = await request(server).get(`/users/${userId}`);
+    expect(getUserResponse.status).toBe(200);
+    expect(getUserResponse.body.children.length).toBe(1);
+    expect(getUserResponse.body.children[0].id).toBe(addChildResponse.body.id);
+  });
+
+  it('should create a new user and get the proposed status for that user', async () => {
+    // Create a new user
+    const createUserResponse = await request(server)
+      .post('/users')
+      .send({
+        firstName: 'Test',
+        lastName: 'User',
+        age: 30,
+        money: 1500,
+        children: [],
+        petName: 'Buddy',
+        address: '789 Elm St',
+        postCode: 'DEF456',
+        status: Status.Regular,
+      });
+
+    // Assertions for user creation
+    expect(createUserResponse.status).toBe(201);
+    expect(createUserResponse.body.id).toBeDefined();
+    testUserId = createUserResponse.body.id;
+
+    // Get the proposed status for the created user
+    const getProposedStatusResponse = await request(server).get(`/users/${testUserId}/proposed-status`);
+
+    // Assertions for getting proposed status
+    expect(getProposedStatusResponse.status).toBe(200);
+    expect(getProposedStatusResponse.body.proposedStatus).toBe(Status.Regular);
+    // Add more assertions based on your application's response structure and expected behavior
+  });
+
+  it('should return 404 status and error when the user is not found', async () => {
+    // Make a request for a non-existing user
+    const response = await request(server).get('/users/1000/proposed-status');
+
+    // Assertions
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe('User not found');
+  });
+
+  const moneyAndProposedStatuses = [
+    [-100, Status.Outdated],
+    [100, Status.Outdated],   
+    [999, Status.Outdated], 
+    [1000, Status.Regular], 
+    [3456, Status.Regular],  
+    [4999, Status.Regular], 
+    [5000, Status.VIP], 
+    [6789, Status.VIP], 
+    [9999, Status.VIP], 
+    [10000, Status.Admin],
+    [98745, Status.Admin],
+    [9874545445, Status.Admin],
+  ];
+
+  it.each(moneyAndProposedStatuses)('should cover all existing statuses with %i money and return proposeNewStatus equal to %i', async (money, expectedStatus) => {
+    // Create a test user with initial status based on the proposeNewStatus method
+    const createUserResponse = await request(server)
+      .post('/users')
+      .send({
+        firstName: 'Test',
+        lastName: 'User',
+        age: 30,
+        money: money,
+        children: [],
+        petName: 'Buddy',
+        address: '789 Elm St',
+        postCode: 'DEF456',
+      });
+
+    const userId = createUserResponse.body.id;
+
+    // Verify the initial status is determined by proposeNewStatus method
+    expect(createUserResponse.status).toBe(201);
+
+    // Use GET method to retrieve the proposed status for the user
+    const getProposedStatusOutdatedesponse = await request(server).get(`/users/${userId}/proposed-status`);
+
+    // Verify the proposed status is 'Outdated' based on the updated amount of money
+    expect(getProposedStatusOutdatedesponse.status).toBe(200);
+    expect(getProposedStatusOutdatedesponse.body.proposedStatus).toBe(expectedStatus);
+  });
+
+  it('should retrieve years to retirement for a specific user by id', async () => {
+    // Create a test user
+    const createUserResponse = await request(server)
+      .post('/users')
+      .send({
+        firstName: 'Test',
+        lastName: 'User',
+        age: 30,
+        money: 800,
+        children: [],
+        petName: 'Buddy',
+        address: '789 Elm St',
+        postCode: 'DEF456',
+      });
+
+    expect(createUserResponse.status).toBe(201);
+    expect(createUserResponse.body.id).toBeDefined();
+    testUserId = createUserResponse.body.id;
+
+    // Get years to retirement for the created user
+    const response = await request(server).get(`/users/${testUserId}/years-to-retirement`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.yearsToRetirement).toBe(35); 
+    // Add more assertions based on your application's response structure and business logic
+  });
+
+  const yearsToRetirementTestData = [
+    [35, 30],   
+    [49, 16], 
+    [64, 1],  
+    [65, 0], 
+    [75, 0], 
+  ];
+  it.each(yearsToRetirementTestData)('should update age to %i and retrieve updated years to retirement equal to %i', async (age, yearsToRetirement) => {
+      await request(server)
+      .put(`/users/${testUserId}`)
+      .send({ age: age });
+
+    let updatedResponse = await request(server).get(`/users/${testUserId}/years-to-retirement`);
+
+    expect(updatedResponse.status).toBe(200);
+    expect(updatedResponse.body.yearsToRetirement).toBe(yearsToRetirement);
+  });
+
+  it('should return 404 status and error when retrieving years to retirement for a non-existing user', async () => {
+    // Use a non-existing user ID (assuming this ID does not exist in the database)
+    const nonExistingUserId = 'non-existing-id';
+
+    // Attempt to get years to retirement for the non-existing user
+    const response = await request(server).get(`/users/${nonExistingUserId}/years-to-retirement`);
+
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe('User not found');
+  });
+
 });

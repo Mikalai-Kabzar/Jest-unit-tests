@@ -139,6 +139,10 @@ server.patch('/users/:id', (req: Request, res: Response) => {
 });
 
 server.post('/users/:userId/children', (req: Request, res: Response) => {
+
+
+
+
   const userId = req.params.userId;
   const user = users.find((u) => u.id === userId);
 
@@ -284,9 +288,31 @@ server.delete('/users/:id', (req: Request, res: Response) => {
   }
 });
 
+// Get the proposed status for a specific user by id
+server.get('/users/:id/proposed-status', (req: Request, res: Response) => {
+  const userId = req.params.id;
+  const user = users.find((u) => u.id === userId);
 
+  if (user) {
+    const proposedStatus = user.proposeNewStatus();
+    res.json({ proposedStatus });
+  } else {
+    res.status(404).json({ error: 'User not found' });
+  }
+});
 
+// Get the years to retirement for a specific user by id
+server.get('/users/:id/years-to-retirement', (req: Request, res: Response) => {
+  const userId = req.params.id;
+  const user = users.find((u) => u.id === userId);
 
+  if (user) {
+    const yearsToRetirement = user.calculateYearsToRetired();
+    res.json({ yearsToRetirement });
+  } else {
+    res.status(404).json({ error: 'User not found' });
+  }
+});
 
 
 
