@@ -619,10 +619,135 @@ describe('User CRUD Operations', () => {
     expect(responseCreateChildForNonExistingUser.body).toEqual({ error: 'User not found' });
   });
 
+  it('should update user properties by id using PATCH method', async () => {
+    // Create a user to update
+    const responseCreateUser = await request(server)
+      .post('/users')
+      .send({
+        firstName: 'Test',
+        lastName: 'User',
+        age: 30,
+        money: 1500,
+        children: [],
+        petName: 'Buddy',
+        address: '789 Elm St',
+        postCode: 'DEF456',
+        status: Status.Regular,
+      });
+
+    const userId = responseCreateUser.body.id;
+
+    // Ensure the user was created successfully
+    expect(responseCreateUser.status).toBe(201);
+
+    // Update user properties using PATCH method
+    const responsePatchUser = await request(server)
+      .patch(`/users/${userId}`)
+      .send({
+        firstName: 'UpdatedFirstName',
+        age: 35,
+        address: 'UpdatedAddress',
+      });
+
+    // Ensure the user properties were updated successfully
+    expect(responsePatchUser.status).toBe(200);
+    expect(responsePatchUser.body.id).toBe(userId);
+    expect(responsePatchUser.body.firstName).toBe('UpdatedFirstName');
+    expect(responsePatchUser.body.age).toBe(35);
+    expect(responsePatchUser.body.address).toBe('UpdatedAddress');
+  });
+
+  it('should create a child for a specific user using POST method', async () => {
+    // Create a user to associate the child with
+    const responseCreateUser = await request(server)
+      .post('/users')
+      .send({
+        firstName: 'Parent',
+        lastName: 'User',
+        age: 30,
+        money: 1500,
+        children: [],
+        petName: 'Buddy',
+        address: '789 Elm St',
+        postCode: 'DEF456',
+        status: Status.Regular,
+      });
+
+    const userId = responseCreateUser.body.id;
+
+    // Ensure the user was created successfully
+    expect(responseCreateUser.status).toBe(201);
+
+    // Create a child for the user using POST method
+    const responseCreateChild = await request(server)
+      .post(`/users/${userId}/children`)
+      .send({
+        firstName: 'Child',
+        lastName: 'User',
+        age: 5,
+        money: 100,
+        petName: 'Fluffy',
+        address: '123 Pine St',
+        postCode: 'ABC123',
+        status: Status.Outdated,
+      });
+
+    // Ensure the child was created successfully
+    expect(responseCreateChild.status).toBe(201);
+    expect(responseCreateChild.body.id).toBeDefined();
+  });
+
+  it('should return 404 status and error when updating a non-existing user', async () => {
+    // Attempt to update a non-existing user
+    const nonExistingUserId = 'non-existing-id';
+    const updateData = {
+      firstName: 'Updated',
+      lastName: 'User',
+      age: 32,
+      money: 1800,
+      children: [],
+      petName: 'Max',
+      address: '456 Oak St',
+      postCode: 'GHI789',
+      status: Status.VIP,
+    };
+
+    const response = await request(server)
+      .put(`/users/${nonExistingUserId}`)
+      .send(updateData);
+
+    // Ensure the response has the expected 404 status and error
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe('User not found');
+  });
+
+  it('should return 404 status and error when updating properties of a non-existing user', async () => {
+    // Attempt to update properties of a non-existing user
+    const nonExistingUserId = 'non-existing-id';
+    const updateData = {
+      firstName: 'Updated',
+      lastName: 'User',
+      age: 32,
+      money: 1800,
+      children: [],
+      petName: 'Max',
+      address: '456 Oak St',
+      postCode: 'GHI789',
+      status: Status.VIP,
+    };
+
+    const response = await request(server)
+      .patch(`/users/${nonExistingUserId}`)
+      .send(updateData);
+
+    // Ensure the response has the expected 404 status and error
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe('User not found');
+  });
 
 
 
 
 
-
+  
 });
