@@ -5,7 +5,12 @@ export enum Status {
     VIP = 'vip',
     Admin = 'admin',
   }
-  
+
+  export enum UserCategory {
+    Child = 'Child',
+    Adult = 'Adult',
+    Senior = 'Senior',
+  }
   export class User {
     id: string; // Added id attribute
     firstName: string;
@@ -61,22 +66,48 @@ export enum Status {
         }
       }
 
-      incrementAgeUntil(targetAge: number): void {
+      incrementAgeUntil(targetAge: number): number {
+        if (targetAge <= 0) {
+          throw new Error('Target age must be greater than 0');
+        }
+      
+        if (targetAge <= this.age) {
+          throw new Error('Target age must be greater than the current age');
+        }
+      
+        let yearsAdded = 0;
+      
         while (this.age < targetAge) {
           this.age++;
+          yearsAdded++;
         }
+      
+        return yearsAdded;
       }
     
       // Function to categorize users based on their age
       categorizeUserByAge(): string {
-        if (this.age < 18) {
-          return 'Child';
-        } else if (this.age >= 18 && this.age < 60) {
-          return 'Adult';
-        } else {
-          return 'Senior';
+        const userCategory: UserCategory = this.calculateUserCategory();
+
+        switch (userCategory) {
+          case UserCategory.Child:
+            return UserCategory.Child;
+          case UserCategory.Adult:
+            return UserCategory.Adult;
+          case UserCategory.Senior:
+            return UserCategory.Senior;
         }
       }
+
+        public calculateUserCategory(): UserCategory {
+          if (this.age < 18) {
+            return UserCategory.Child;
+          } else if (this.age >= 18 && this.age < 60) {
+            return UserCategory.Adult;
+          } else {
+            return UserCategory.Senior;
+          }
+        }
 
        // Method to check if the user is a teenager
         isTeenager(): boolean {

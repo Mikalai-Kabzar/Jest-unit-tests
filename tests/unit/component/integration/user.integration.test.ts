@@ -1,7 +1,7 @@
 // user.component.test.ts
 import request from 'supertest';
 import { server, startServer, closeServer } from './server'; // Adjust the import path based on your project structure
-import { Status, User} from './User';
+import { Status, User, UserCategory} from './User';
 
 beforeAll(async () => {
   await startServer();
@@ -950,5 +950,141 @@ describe('User CRUD Operations', () => {
     expect(response.status).toBe(404);
     expect(response.body.error).toBe('User not found');
   });
+  const userCategoryTestData = [
+    [0, UserCategory.Child], 
+    [10, UserCategory.Child], 
+    [17, UserCategory.Child], 
+    [18, UserCategory.Adult],  
+    [19, UserCategory.Adult], 
+    [59, UserCategory.Adult], 
+    [60, UserCategory.Senior], 
+    [92, UserCategory.Senior], 
+  ];
+  it.each(userCategoryTestData)('should get the user category for a specific user with age %i and expected category %i by id', async (age, category) => {
+    // Create a new user
+    const createUserResponse = await request(server)
+      .post('/users')
+      .send({
+        firstName: 'Test',
+        lastName: 'User',
+        age: age,
+        money: 800,
+        children: [],
+        petName: 'Buddy',
+        address: '789 Elm St',
+        postCode: 'DEF456',
+        status: Status.Regular,
+      });
+
+    expect(createUserResponse.status).toBe(201);
+    testUserId = createUserResponse.body.id;
+
+    // Get the user category for the created user
+    const response = await request(server).get(`/users/${testUserId}/category`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.userCategory).toBe(category); 
+  });
+
+  it('should return 404 when getting user category for a non-existing user', async () => {
+    const nonExistingUserId = 'nonexistinguser123';
+
+    // Attempt to get the user category for a non-existing user
+    const response = await request(server).get(`/users/${nonExistingUserId}/category`);
+
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe('User not found');
+  });
+ 
+  it('should return 404 status and error when incrementing age for a non-existing user by id', async () => {
+    const nonExistingUserId = 'non-existing-id';
+
+    // Send a POST request to increment the age for a non-existing user
+    const response = await request(server)
+      .post(`/users/${nonExistingUserId}/increment-age-until/40`)
+      .send();
+
+    // Verify the response
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe('User not found');
+  });
+
+  it('should increment age until target age', async () => {
+    const initialAge = 30;
+    const targetAge = 40;
+    const createUserResponse = await request(server)
+      .post('/users')
+      .send({
+        firstName: 'Test',
+        lastName: 'User',
+        age: initialAge,
+        money: 800,
+        children: [],
+        petName: 'Buddy',
+        address: '789 Elm St',
+        postCode: 'DEF456',
+        status: Status.Regular,
+      });
+
+    const userId = createUserResponse.body.id;
+
+    const incrementAgeResponse = await request(server)
+      .post(`/users/${userId}/increment-age-until/${targetAge}`);
+
+    expect(incrementAgeResponse.status).toBe(200);
+    expect(incrementAgeResponse.body.message).toBe('Age incremented successfully');
+    expect(incrementAgeResponse.body.yearsAdded).toBe(targetAge - initialAge);
+
+    const getUserResponse = await request(server).get(`/users/${userId}`);
+    expect(getUserResponse.status).toBe(200);
+    expect(getUserResponse.body.age).toBe(targetAge);
+  });
+
+  it.each([
+    { initialAge: 30, targetAge: 30 , errorMessage: 'Target age must be greater than the current age'},
+    { initialAge: 30, targetAge: 25 , errorMessage: 'Target age must be greater than the current age'},
+    { initialAge: 30, targetAge: 0 , errorMessage: 'Target age must be greater than 0'},
+    { initialAge: 30, targetAge: -13 , errorMessage: 'Target age must be greater than 0'},
+  ])('should return 400 for invalid target age (%p)', async ({ initialAge, targetAge, errorMessage }) => {
+    const createUserResponse = await request(server)
+      .post('/users')
+      .send({
+        firstName: 'Test',
+        lastName: 'User',
+        age: initialAge,
+        money: 800,
+        children: [],
+        petName: 'Buddy',
+        address: '789 Elm St',
+        postCode: 'DEF456',
+        status: Status.Regular,
+      });
+
+    const userId = createUserResponse.body.id;
+
+    const incrementAgeResponse = await request(server)
+      .post(`/users/${userId}/increment-age-until/${targetAge}`);
+
+    expect(incrementAgeResponse.status).toBe(400);
+    expect(incrementAgeResponse.body.error).toBe(errorMessage);
+
+    const getUserResponse = await request(server).get(`/users/${userId}`);
+    expect(getUserResponse.status).toBe(200);
+    expect(getUserResponse.body.age).toBe(initialAge); 
+  });
+
+  it('should return 404 for non-existing user', async () => {
+    const incrementAgeResponse = await request(server)
+      .post(`/users/nonExistingUserId/increment-age-until/40`);
+
+    expect(incrementAgeResponse.status).toBe(404);
+    expect(incrementAgeResponse.body.error).toBe('User not found');
+  });
+
+
+
+
+
+
 
 });

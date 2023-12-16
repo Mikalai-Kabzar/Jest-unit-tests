@@ -2,6 +2,7 @@
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import { Status, User } from './User';
+import { error } from 'console';
 
 const server = express();
 const port = 3000;
@@ -270,9 +271,65 @@ server.get('/users/:id/years-to-retirement', (req: Request, res: Response) => {
   }
 });
 
+// Get the user category for a specific user by id
+server.get('/users/:id/category', (req: Request, res: Response) => {
+  const userId = req.params.id;
+  const user = users.find((u) => u.id === userId);
+
+  if (user) {
+    const userCategory = user.calculateUserCategory();
+    res.json({ userCategory });
+  } else {
+    res.status(404).json({ error: 'User not found' });
+  }
+});
 
 
+// server.post('/users/:id/increment-age-until/:targetAge', (req: Request, res: Response) => {
+//   const userId = req.params.id;
+//   const targetAge = parseInt(req.params.targetAge);
 
+//   const user = users.find((u) => u.id === userId);
+
+//   if (user) {
+//     try {
+//       const yearsAdded = user.incrementAgeUntil(targetAge);
+//       res.json({ message: 'Age incremented successfully', yearsAdded:  yearsAdded});
+//     } catch (error) {
+//       res.status(400).json({ error: error.message });
+//     }
+//   } else {
+//     res.status(404).json({ error: 'User not found' });
+//   }
+// });
+
+server.post('/users/:id/increment-age-until/:targetAge', (req: Request, res: Response) => {
+  const userId = req.params.id;
+  const user = users.find((u) => u.id === userId);
+
+  if (!user) {
+    res.status(404).json({ error: 'User not found' });
+    return;
+  }
+
+   const targetAge = parseInt(req.params.targetAge, 10);
+
+  // if (isNaN(targetAge) || targetAge <= 0 || targetAge < user.age) {
+  //   res.status(400).json({ error: 'Invalid target age' });
+  //   return;
+  // }
+
+  //let yearsAdded = 0;
+  try {
+    let yearsAdded = user.incrementAgeUntil(targetAge);
+    //yearsAdded = user.age - userInitialAge; // Assuming you have an initial age stored somewhere
+    res.json({ message: 'Age incremented successfully', yearsAdded });
+  } catch (e) {
+    if (e instanceof Error) {
+      res.status(400).json({ error: e.message});
+    } 
+  }
+});
 
 
 let serverInstance: any = null;
