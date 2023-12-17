@@ -11,7 +11,7 @@ afterAll(async () => {
   await closeServer();
 });
 
-describe('User CRUD Operations', () => {
+describe('User CRUD Operations integration tests', () => {
   let testUserId: string;
   let testChildId: string;
 
@@ -867,7 +867,7 @@ describe('User CRUD Operations', () => {
     [9874545445, Status.Admin],
   ];
 
-  it.each(moneyAndProposedStatuses)('should cover all existing statuses with %i money and return proposeNewStatus equal to %i', async (money, expectedStatus) => {
+  it.each(moneyAndProposedStatuses)('should cover all existing statuses with %i money and return proposeNewStatus equal to %p', async (money, expectedStatus) => {
     // Create a test user with initial status based on the proposeNewStatus method
     const createUserResponse = await request(server)
       .post('/users')

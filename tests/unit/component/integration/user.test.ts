@@ -1,7 +1,7 @@
 // User.test.ts
 import { User, Status } from './User';
 
-describe('User class', () => {
+describe('User usit tests', () => {
   it('should create a new user with the provided values', () => {
     const user = new User(
       '1', // Mocked ID for testing

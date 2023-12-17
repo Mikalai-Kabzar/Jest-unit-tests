@@ -1,6 +1,7 @@
 module.exports = {
   preset: 'ts-jest',
-  testEnvironment: 'node',
+  //testEnvironment: ['node'],
+  testEnvironment: 'allure-jest/jsdom',
   coverageProvider: 'babel',
   reporters: ['default'],
   transform: {
@@ -13,5 +14,7 @@ module.exports = {
       tsconfig: './tsconfig.json',
     },
   },
+  testRunner: "jest-jasmine2",
+  setupFilesAfterEnv: ["jest-allure/dist/setup"]
   // Other Jest configuration options...
 };
