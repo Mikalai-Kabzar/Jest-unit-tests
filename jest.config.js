@@ -3,7 +3,12 @@ module.exports = {
   //testEnvironment: ['node'],
   testEnvironment: 'allure-jest/jsdom',
   coverageProvider: 'babel',
-  reporters: ['default'],
+  reporters: ['default',   
+  ["jest-html-reporters", {
+    "publicPath": "./html-report",
+    "filename": "report.html",
+    "openReport": true
+  }]],
   transform: {
     '^.+\\.jsx?$': 'babel-jest',
     '^.+\\.tsx?$': 'ts-jest',
