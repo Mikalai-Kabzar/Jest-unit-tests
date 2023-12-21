@@ -20,7 +20,8 @@
     "ts-jest": "^29.1.1"
   },
   "scripts": {
-    "test": "jest --coverage"
+    "test": "jest --coverage --detectOpenHandles",
+    "test_c": "jest --coverage --detectOpenHandles"
   },
   "dependencies": {
     "dotenv": "^16.3.1",

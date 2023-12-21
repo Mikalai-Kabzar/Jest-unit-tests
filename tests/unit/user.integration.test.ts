@@ -1,4 +1,4 @@
-// user.component.test.ts
+// user.integration.test.ts
 import request from 'supertest';
 import { server, startServer, closeServer } from './server'; // Adjust the import path based on your project structure
 import { Status, User, UserCategory} from './User';
