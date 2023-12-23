@@ -3,16 +3,6 @@
 import request from 'supertest';
 import {server} from './server';
 
-// Mock the supertest post function
-jest.stub('supertest', () => {
-  const original = jest.requireActual('supertest');
-
-  return {
-    ...original,
-    post: jest.fn(() => {
-    }),
-  };
-});
 
 describe('User Routes Integration Tests', () => {
   it('should create a new user', async () => {
